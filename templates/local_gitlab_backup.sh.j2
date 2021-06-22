@@ -1,0 +1,14 @@
+#!/bin/bash
+# Script for making daily Gitlab backups
+TMP_BACKUP_DIR={{ tmp_backup_dir }}
+
+# Delete temp directory if already exists
+if [ -d "$TMP_BACKUP_DIR" ]; then
+  rm -rf $TMP_BACKUP_DIR
+fi
+# Create temp directory
+mkdir -p $TMP_BACKUP_DIR
+# Backup configuration
+gitlab-ctl backup-etc && cd /etc/gitlab/config_backup && cp $(ls -t | head -n1) $TMP_BACKUP_DIR && cd -
+# Backup GitLab
+gitlab-backup create SKIP=builds,artifacts,registry && cd /var/opt/gitlab/backups/ && cp $(ls -t | head -n1) $TMP_BACKUP_DIR && cd -

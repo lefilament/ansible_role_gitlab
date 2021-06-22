@@ -1,0 +1,14 @@
+#!/bin/bash
+
+export SWIFT_USERNAME="{{ swift_odoo_username }}"
+export SWIFT_PASSWORD="{{ swift_odoo_password }}"
+export SWIFT_AUTHURL="{{ swift_odoo_authurl }}"
+export SWIFT_AUTHVERSION={{ swift_odoo_authversion }}
+export SWIFT_TENANTNAME="{{ swift_odoo_tenantname }}"
+export SWIFT_TENANTID="{{ swift_odoo_tenantid }}"
+export SWIFT_REGIONNAME="{{ swift_odoo_regionname }}"
+
+export PASSPHRASE="{{ git_backup_pass }}"
+
+duplicity full --volsize 200 {{ tmp_backup_dir }} swift://gitlab_{{ inventory_hostname|lower }}
+duplicity remove-all-but-n-full 30 --force swift://gitlab_{{ inventory_hostname|lower }}

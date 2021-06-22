@@ -1,0 +1,37 @@
+---
+domain: example.org
+git_url: git.{{ domain }}
+
+## Mail configuration
+mailserver: smtp.{{ domain }}
+smtpport: 465
+smtpuser: smtpuser
+smtppass: veryUnsecurePassToBeModified
+git_mail_from: git@{{ domain }}
+default_maintenance_email: maintenance@{{ domain }}
+
+## OPTIONAL - SSO integration
+enable_omniauth: false
+# sso_url: auth.{{ domain }}
+# sso_oidc_gitlab_id: gitlabid
+# sso_oidc_gitlab_secret: secrettobemodified
+
+## OPTIONAL - For Backups only
+## Parameters for pushing backups to Object Storage - Instance 1
+# swift_odoo_authurl: https://auth.cloud.ovh.net/v3/
+# swift_odoo_authversion: 3
+# swift_odoo_tenantid: "132e1fa"
+# swift_odoo_tenantname: "12312534534"
+# swift_odoo_username: "testuser"
+# swift_odoo_password: "testpassword"
+# swift_odoo_regionname: "GRA"
+## Parameters for pushing backups to Object Storage - Instance 2
+# swift_odoo2_authurl: https://auth.cloud.ovh.net/v3/
+# swift_odoo2_authversion: 3
+# swift_odoo2_tenantid: "12323534ab"
+# swift_odoo2_tenantname: "123124235345"
+# swift_odoo2_username: "testuser"
+# swift_odoo2_password: "testpassword"
+# swift_odoo2_regionname: "DE"
+## Passphrase for backups encryption
+# git_backup_pass: notSecureEnoughPasswordToBeModified

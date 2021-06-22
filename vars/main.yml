@@ -1,0 +1,22 @@
+---
+gitlab_gpg_key_url: https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey
+gitlab_packages_url: https://packages.gitlab.com/gitlab/gitlab-ce
+packages_to_install:
+  - gitlab-ce
+  - duplicity
+  - python3-pip
+tmp_backup_dir: "/tmp/gitlab_backups/"
+
+backup_crons:
+  - name: "local gitlab backup"
+    script: local_gitlab_backup.sh
+    hour: 2
+    minute: 43
+  - name: "push gitlab backup"
+    script: push_gitlab_backup.sh
+    hour: 3
+    minute: 43
+  - name: "push gitlab backup 2"
+    script: push_gitlab_backup2.sh
+    hour: 4
+    minute: 43

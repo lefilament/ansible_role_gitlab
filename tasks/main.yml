@@ -1,0 +1,75 @@
+---
+
+- name: Install apt-transport-https package
+  package:
+    name: apt-transport-https
+    state: latest
+  async: 120
+  poll: 10
+  when: ansible_os_family == "Debian" and not ansible_check_mode
+
+# INSTALLATION
+- name: Add GitLab GPG key to APT
+  apt_key:
+    url: "{{ gitlab_gpg_key_url }}"
+  when: ansible_os_family == "Debian"
+
+- name: Add GitLab repo to APT repositories
+  apt_repository:
+    repo: deb {{ gitlab_packages_url }}/{{ ansible_distribution|lower }} {{ ansible_distribution_release }} main
+    update_cache: true
+  when: ansible_os_family == "Debian"
+
+- name: Install GitLab package
+  package:
+    name: "{{ packages_to_install }}"
+    state: latest
+  async: 120
+  poll: 10
+  when: not ansible_check_mode
+
+- name: Check installed GitLab package
+  package:
+    name: gitlab-ce
+    state: latest
+  when: ansible_check_mode
+
+- name: Install necessary python modules
+  pip:
+    name: ['python-swiftclient', 'python-keystoneclient']
+    state: latest
+
+# CONFIGURATION
+- name: Install gitlab configuration file
+  template:
+    src: gitlab.rb.j2
+    dest: "/etc/gitlab/gitlab.rb"
+    owner: root
+    group: root
+    mode: '0600'
+  notify: reconfigure gitlab
+
+
+# BACKUP
+- name: Copy Backup scripts on server
+  template:
+    src: "{{ item.script }}.j2"
+    dest: /root/{{ item.script }}
+    owner: root
+    group: root
+    mode: '0700'
+  with_items: '{{ backup_crons }}'
+  loop_control:
+    label: '{{ item.name }}'
+  when: inventory_hostname in groups.maintenance_contract
+
+- name: add cron job to execute backup list every day
+  cron:
+    name: "{{ item.name }}"
+    minute: "{{ item.minute }}"
+    hour: "{{ item.hour }}"
+    job: /root/{{ item.script }}
+  with_items: '{{ backup_crons }}'
+  loop_control:
+    label: '{{ item.name }}'
+  when: inventory_hostname in groups.maintenance_contract

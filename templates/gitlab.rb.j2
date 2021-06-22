@@ -1,0 +1,90 @@
+### GitLab URL
+external_url 'https://{{ git_url }}'
+
+### Timezone
+gitlab_rails['time_zone'] = 'Europe/Paris'
+
+### SMTP server
+gitlab_rails['smtp_enable'] = true
+gitlab_rails['smtp_address'] = "{{ mailserver }}"
+gitlab_rails['smtp_port'] = {{ smtpport }}
+gitlab_rails['smtp_user_name'] = "{{ smtpuser }}"
+gitlab_rails['smtp_password'] = "{{ smtppass }}"
+gitlab_rails['smtp_domain'] = "{{ domain }}"
+gitlab_rails['smtp_authentication'] = "login"
+gitlab_rails['smtp_tls'] = true
+gitlab_rails['smtp_openssl_verify_mode'] = 'none'
+
+### Email Settings
+gitlab_rails['gitlab_email_enabled'] = true
+gitlab_rails['gitlab_email_from'] = '{{ git_mail_from }}'
+gitlab_rails['gitlab_email_reply_to'] = 'noreply@{{ domain }}'
+gitlab_rails['incoming_email_enabled'] = false
+
+### Content Security Policy
+gitlab_rails['content_security_policy'] = {
+ 'enabled' => true,
+ 'report_only' => false,
+}
+
+### Impersonation settings
+gitlab_rails['impersonation_enabled'] = true
+
+{% if enable_omniauth is defined %}
+### Omniauth (SSO auth)
+gitlab_rails['omniauth_enabled'] = true
+gitlab_rails['omniauth_allow_single_sign_on'] = ['openid_connect']
+gitlab_rails['omniauth_block_auto_created_users'] = false
+gitlab_rails['omniauth_providers'] = [
+  {
+    "name" => 'openid_connect',
+    "args" => {
+      'name' => 'openid_connect',
+      'issuer' => 'https://{{ sso_url }}',
+      'scope' => ['openid', 'profile', 'email'],
+      'response_type' => 'code',
+      'client_auth_method' => 'client_secret_post',
+      'discovery' => true,
+      'uid_field' => 'sub',
+      'client_options' => {
+        'redirect_uri' => 'http://{{ git_url }}/users/auth/openid_connect/callback',
+        'identifier' => '{{ sso_oidc_gitlab_id }}',
+        'secret' => '{{ sso_oidc_gitlab_secret }}',
+      }
+    },
+    "label" => 'Le Filament SSO'
+  }
+]
+
+{% endif %}
+### Container Registry settings
+registry_external_url 'https://{{ git_url }}:5050'
+
+### GitLab PostgreSQL
+##! **recommend value is 1/4 of total RAM, up to 14GB.**
+postgresql['shared_buffers'] = "1GB"
+
+### GitLab NGINX
+nginx['redirect_http_to_https'] = true
+
+### GitLab Mattermost
+mattermost['enable'] = false
+
+### Registry NGINX
+registry_nginx['enable'] = true
+registry_nginx['redirect_http_to_https'] = true
+
+### Prometheus
+prometheus_monitoring['enable'] = false
+alertmanager['enable'] = false
+node_exporter['enable'] = false
+redis_exporter['enable'] = false
+postgres_exporter['enable'] = false
+gitlab_exporter['enable'] = false
+
+### Grafana Dashboards
+grafana['enable'] = false
+
+### Let's Encrypt integration
+letsencrypt['enable'] = true
+letsencrypt['contact_emails'] = ['{{ default_maintenance_email }}']
