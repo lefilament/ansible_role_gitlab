@@ -10,5 +10,5 @@ export SWIFT_REGIONNAME="{{ swift_odoo_regionname }}"
 
 export PASSPHRASE="{{ git_backup_pass }}"
 
-duplicity full --volsize 200 {{ tmp_backup_dir }} swift://gitlab_{{ inventory_hostname|lower }}
+duplicity full --name backup --volsize 200 {{ tmp_backup_dir }} swift://gitlab_{{ inventory_hostname|lower }}
 duplicity remove-all-but-n-full 30 --force swift://gitlab_{{ inventory_hostname|lower }}

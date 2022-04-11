@@ -53,22 +53,21 @@
 # BACKUP
 - name: Copy Backup scripts on server
   template:
-    src: "{{ item.script }}.j2"
-    dest: /root/{{ item.script }}
+    src: "{{ item }}.j2"
+    dest: /root/{{ item }}
     owner: root
     group: root
     mode: '0700'
-  with_items: '{{ backup_crons }}'
-  loop_control:
-    label: '{{ item.name }}'
+  with_items: '{{ backup_scripts }}'
   when: inventory_hostname in groups.maintenance_contract
 
-- name: add cron job to execute backup list every day
+- name: Add cron job to execute backup
   cron:
     name: "{{ item.name }}"
-    minute: "{{ item.minute }}"
-    hour: "{{ item.hour }}"
-    job: /root/{{ item.script }}
+    minute: "{{ item.minute | default('*') }}"
+    hour: "{{ item.hour | default('*') }}"
+    weekday: "{{ item.weekday | default('*') }}"
+    job: "{{ item.job }}"
   with_items: '{{ backup_crons }}'
   loop_control:
     label: '{{ item.name }}'
