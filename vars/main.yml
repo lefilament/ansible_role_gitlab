@@ -2,31 +2,31 @@
 gitlab_gpg_key_url: https://packages.gitlab.com/gitlab/gitlab-ce/gpgkey
 gitlab_packages_url: https://packages.gitlab.com/gitlab/gitlab-ce
 packages_to_install:
-  - gitlab-ce
-  - duplicity
-  - python3-pip
+    - gitlab-ce
+    - duplicity
+    - python3-pip
 tmp_backup_dir: "/tmp/gitlab_backups/"
 
 backup_scripts:
-  - "local_gitlab_backup.sh"
-  - "push_gitlab_backup.sh"
-  - "push_gitlab_backup2.sh"
+    - "local_gitlab_backup.sh"
+    - "push_gitlab_backup.sh"
+    - "push_gitlab_backup2.sh"
 
 backup_crons:
-  - name: "remove old local gitlab backup"
-    job: "/usr/bin/find /var/opt/gitlab/backups/ -ctime +7 -delete"
-    weekday: 0
-    hour: 1
-    minute: 43
-  - name: "local gitlab backup"
-    job: "/root/local_gitlab_backup.sh"
-    hour: 2
-    minute: 43
-  - name: "push gitlab backup"
-    job: "/root/push_gitlab_backup.sh"
-    hour: 3
-    minute: 43
-  - name: "push gitlab backup 2"
-    job: "/root/push_gitlab_backup2.sh"
-    hour: 4
-    minute: 43
+    - name: "remove old local gitlab backup"
+      job: "/usr/bin/find /var/opt/gitlab/backups/ -ctime +7 -delete"
+      weekday: 0
+      hour: 4
+      minute: 0
+    - name: "local gitlab backup"
+      job: "/root/local_gitlab_backup.sh"
+      hour: 0
+      minute: 35
+    - name: "push gitlab backup 2"
+      job: "/root/push_gitlab_backup2.sh"
+      hour: 0
+      minute: 50
+    - name: "push gitlab backup"
+      job: "/root/push_gitlab_backup.sh"
+      hour: 1
+      minute: 50
